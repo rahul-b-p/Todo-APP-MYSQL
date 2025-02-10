@@ -6,7 +6,10 @@ config();
 
 
 const requiredEnvVariables: string[] = [
-    'MONGODB_URI',
+    'DB_HOST',
+    'DB_NAME',
+    'DB_USERNAME',
+    'DB_PASSWORD',
     'HASH_SALT_ROUNDS',
     'ADMIN_USERNAME',
     'ADMIN_EMAIL',
@@ -33,7 +36,10 @@ requiredEnvVariables.forEach((envVar) => {
 
 
 // exporting all env variables
-export const MONGODB_URI = process.env.MONGODB_URI as string;
+export const DB_HOST = process.env.DB_HOST as string;
+export const DB_NAME = process.env.DATABASE_NAME as string;
+export const DB_USERNAME = process.env.DB_USERNAME as string;
+export const DB_PASSWORD = process.env.DB_PASSWORD as string;
 
 export const HASH_SALT_ROUNDS = process.env.HASH_SALT_ROUNDS as string;
 
