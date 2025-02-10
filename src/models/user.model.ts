@@ -43,7 +43,6 @@ User.init({
     verified: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
-        allowNull: false
     },
     refreshToken: {
         type: DataTypes.STRING,

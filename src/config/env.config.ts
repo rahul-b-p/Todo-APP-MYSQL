@@ -1,5 +1,6 @@
 import { config } from "dotenv";
 import { errorMessage } from "../constants";
+import { logger } from "../utils";
 
 config();
 
@@ -37,9 +38,10 @@ requiredEnvVariables.forEach((envVar) => {
 
 // exporting all env variables
 export const DB_HOST = process.env.DB_HOST as string;
-export const DB_NAME = process.env.DATABASE_NAME as string;
+export const DB_NAME = process.env.DB_NAME as string;
 export const DB_USERNAME = process.env.DB_USERNAME as string;
 export const DB_PASSWORD = process.env.DB_PASSWORD as string;
+
 
 export const HASH_SALT_ROUNDS = process.env.HASH_SALT_ROUNDS as string;
 
