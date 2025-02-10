@@ -37,7 +37,7 @@ export const verifyOtp = async (userId: string, otp: string): Promise<boolean> =
         const existingOtp = await Otp.findOne({
             where: { userId, otp }
         });
-        
+
         if (existingOtp) {
             await Otp.destroy({
                 where: { id: existingOtp.id }

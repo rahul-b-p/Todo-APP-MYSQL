@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import { HASH_SALT_ROUNDS } from '../config';
-import { logFunctionInfo } from './logger';
+import { logFunctionInfo, logger } from './logger';
 import { FunctionStatus } from '../enums';
 
 
@@ -32,6 +32,8 @@ export const comparePassword = async (password: string, hashedPassword: string):
     logFunctionInfo(functionName, FunctionStatus.START);
 
     try {
+        logger.info(password);
+        logger.info(hashedPassword)
         const isValidPassword = await bcrypt.compare(password, hashedPassword);
 
         logFunctionInfo(functionName, FunctionStatus.SUCCESS);

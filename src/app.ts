@@ -2,8 +2,9 @@ import express from 'express';
 import './config/env.config';
 import { createDefultAdmin, logger } from './utils';
 import { morganLogger } from './config';
-import { connectMySql, synchronizeDB } from './database';
+import { connectMySql, deleteExpiredOtps, deleteExpiredTokens, synchronizeDB } from './database';
 import { ErrorHandler } from './middlewares';
+import { authRouter } from './routers';
 
 
 
@@ -25,6 +26,12 @@ const InitializeApp = async () => {
 
         //using morgan logger on application
         app.use(morganLogger);
+
+        // Using JSON body parsing middleware
+        app.use(express.json());
+
+        // Using routers
+        app.use('/auth', authRouter)
 
 
         // Using custom error handlers on application
@@ -57,3 +64,8 @@ process.on('uncaughtException', (error) => {
     logger.error('Uncaught Exception:', error);
     process.exit(1);
 });
+
+// Run token cleanup every hour
+setInterval(deleteExpiredTokens, 60 * 60 * 1000);
+// Run otp cleanup every minute
+setInterval(deleteExpiredOtps, 60 * 1000);

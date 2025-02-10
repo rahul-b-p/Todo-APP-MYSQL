@@ -5,7 +5,7 @@ export interface IOtp {
     id: number
     userId: number;
     otp: string;
-    expiresAt: Date;
+    expiresAt?: Date;
 }
 
-export interface IOTPCreation extends Optional<IOtp, 'id' | 'expiresAt'> { };
+export interface IOTPCreation extends Optional<IOtp, 'id'> { };

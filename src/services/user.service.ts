@@ -1,7 +1,7 @@
 import { FunctionStatus, Roles } from "../enums";
 import { IUser } from "../interfaces";
 import { User } from "../models";
-import { UserInsertArgs } from "../types";
+import { UserInsertArgs, UserUpdateArgs } from "../types";
 import { hashPassword, logFunctionInfo } from "../utils";
 
 
@@ -98,3 +98,31 @@ export const findUserById = async (id: string): Promise<IUser | null> => {
         throw new Error(error.message);
     }
 }
+
+/**
+ * Updates an existing user data by its unique id.
+*/
+export const updateUserById = async (id: string, userToUpdate: UserUpdateArgs): Promise<IUser | null> => {
+    const functionName = updateUserById.name;
+    logFunctionInfo(functionName, FunctionStatus.START);
+    try {
+        const updatedStatus = await User.update(userToUpdate, {
+            where: { id }
+        });
+        if (updatedStatus[0] < 1) return null;
+
+        const updatedUser = await User.findOne({
+            where: { id }
+        });
+
+        delete (updatedUser as any).password;
+        delete (updatedUser as any).refreshToken;
+
+
+        logFunctionInfo(functionName, FunctionStatus.SUCCESS);
+        return updatedUser as IUser;
+    } catch (error: any) {
+        logFunctionInfo(functionName, FunctionStatus.FAIL, error.message);
+        throw new Error(error.message);
+    }
+};

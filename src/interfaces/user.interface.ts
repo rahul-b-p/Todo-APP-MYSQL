@@ -8,7 +8,7 @@ export interface IUser {
     email: string;
     password: string;
     role: Roles;
-    refreshToken?: string;
+    refreshToken?: string|null;
     verified?: boolean
 }
 
