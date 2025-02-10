@@ -18,8 +18,7 @@ Blacklist.init(
         },
         token: {
             type: DataTypes.STRING,
-            allowNull: false,
-            unique: true
+            allowNull: false
         },
         expireAt: {
             type: DataTypes.DATE,
@@ -28,7 +27,7 @@ Blacklist.init(
     },
     {
         sequelize,
-        tableName: "blacklists",
+        tableName: "Blacklist",
         timestamps: false, // Since your Mongoose schema doesn't have timestamps
         indexes: [
             {
