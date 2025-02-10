@@ -3,6 +3,7 @@ import './config/env.config';
 import { createDefultAdmin, logger } from './utils';
 import { morganLogger } from './config';
 import { connectMySql, synchronizeDB } from './database';
+import { ErrorHandler } from './middlewares';
 
 
 
@@ -25,6 +26,9 @@ const InitializeApp = async () => {
         //using morgan logger on application
         app.use(morganLogger);
 
+
+        // Using custom error handlers on application
+        app.use(ErrorHandler);
 
         // listening the application on port
         app.listen(port, () => {
