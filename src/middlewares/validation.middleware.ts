@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { ZodError, ZodSchema } from "zod";
-import { BadRequestError } from "../errors";
-import { InternalServerError } from "../errors";
+import { BadRequestError, InternalServerError } from "../errors";
 import { logFunctionInfo } from "../utils";
 import { FunctionStatus } from "../enums";
 import { errorMessage } from "../constants";

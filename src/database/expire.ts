@@ -3,7 +3,9 @@ import { Blacklist, Otp } from "../models";
 import { logger } from "../utils";
 
 
-
+/**
+ * To delete expired tokens
+ */
 export const deleteExpiredTokens = async () => {
     try {
         await Blacklist.destroy({
@@ -17,6 +19,10 @@ export const deleteExpiredTokens = async () => {
     }
 };
 
+
+/**
+ * To delete Expired tokens
+ */
 export const deleteExpiredOtps = async () => {
     try {
         await Otp.destroy({
