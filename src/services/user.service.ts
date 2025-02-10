@@ -79,3 +79,22 @@ export const findUserByEmail = async (email: string): Promise<IUser | null> => {
     }
 }
 
+
+/**
+ * Finds a user by its unique ID
+ */
+export const findUserById = async (id: string): Promise<IUser | null> => {
+    const functionName = findUserById.name;
+    logFunctionInfo(functionName, FunctionStatus.START);
+    try {
+        const user = await User.findOne({
+            where: { id }
+        });
+
+        if (user) logFunctionInfo(functionName, FunctionStatus.SUCCESS);
+        return user;
+    } catch (error: any) {
+        logFunctionInfo(functionName, FunctionStatus.FAIL, error.message);
+        throw new Error(error.message);
+    }
+}
