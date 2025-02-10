@@ -9,7 +9,7 @@ export interface IUser {
     password: string;
     role: Roles;
     refreshToken?: string;
-    verified: boolean
+    verified?: boolean
 }
 
 export interface IUserCreation extends Optional<IUser, "id"> { }; 

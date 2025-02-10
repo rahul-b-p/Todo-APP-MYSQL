@@ -1,6 +1,6 @@
 import express from 'express';
 import './config/env.config';
-import { logger } from './utils';
+import { createDefultAdmin, logger } from './utils';
 import { morganLogger } from './config';
 import { connectMySql, synchronizeDB } from './database';
 
@@ -18,6 +18,9 @@ const InitializeApp = async () => {
         // Connecting and Synchronizing with MySQL Database
         await connectMySql();
         await synchronizeDB();
+
+        // creating default admin
+        await createDefultAdmin();
 
         //using morgan logger on application
         app.use(morganLogger);
