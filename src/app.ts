@@ -1,7 +1,8 @@
 import express from 'express';
 import './config/env.config';
-import { morganLogger } from './config';
 import { logger } from './utils';
+import { morganLogger } from './config';
+import { connectMySql, synchronizeDB } from './database';
 
 
 
@@ -14,10 +15,12 @@ const port = process.env.PORT || 3000;
 const InitializeApp = async () => {
     try {
 
+        // Connecting and Synchronizing with MySQL Database
+        await connectMySql();
+        await synchronizeDB();
 
         //using morgan logger on application
         app.use(morganLogger);
-
 
 
         // listening the application on port
