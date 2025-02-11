@@ -29,6 +29,8 @@ export type TodoToShow = {
     user: UserToShow;
     createdAt: Date;
     updatedAt: Date;
+    deletedAt?: Date;
+
 }
 
 export type TodoFetchResult = PageInfo & {
@@ -42,3 +44,5 @@ export type UpdateTodoBody = Partial<InsertTodoArgs> & {
 export type UpdateTodoArgs = Omit<UpdateTodoBody, 'dueDate' | 'dueTime'> & {
     dueAt?: Date;
 }
+
+export type TodoScope = "trashData" | null;

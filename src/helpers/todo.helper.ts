@@ -1,6 +1,6 @@
 import { FetchType, FunctionStatus } from "../enums";
 import { CompletedStatus } from "../enums/todo.enum";
-import { TimeInHHMM, TodoFilterQuery, TodoToShow, UpdateTodoArgs, UpdateTodoBody, YYYYMMDD } from "../types";
+import { TimeInHHMM, TodoFilterQuery, UpdateTodoArgs, UpdateTodoBody, YYYYMMDD } from "../types";
 import { logFunctionInfo } from "../utils";
 import { getDateFromStrings, getDayRange } from "./date.helper";
 import { errorMessage } from "../constants";
@@ -88,21 +88,4 @@ export const getTodoUpdateArgs = (updateBody: UpdateTodoBody, existingTodo: ITod
     }
 
     return restTodoUpdateBody;
-}
-
-
-/**
- * To converts the type, in to `TodoToShow`, for more clarity in usage
- */
-export const convertTodoToShow = (todoData: any): TodoToShow => {
-    return {
-        id: todoData.id,
-        title: todoData.title,
-        description: todoData.description,
-        user: todoData.user,
-        dueAt: todoData.dueAt,
-        completed: todoData.completed,
-        createdAt: todoData.createdAt,
-        updatedAt: todoData.updatedAt,
-    }
 }

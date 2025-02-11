@@ -1,6 +1,6 @@
 import { NextFunction, Response } from "express";
 import { customRequestWithPayload } from "../interfaces";
-import { logFunctionInfo, sendCustomResponse } from "../utils";
+import { logFunctionInfo, logger, sendCustomResponse } from "../utils";
 import { DateStatus, FetchType, FunctionStatus, Roles } from "../enums";
 import { InsertTodoArgs, TodoFilterQuery, UpdateTodoBody } from "../types";
 import { AuthenticationError, BadRequestError, ForbiddenError, InternalServerError, NotFoundError } from "../errors";
