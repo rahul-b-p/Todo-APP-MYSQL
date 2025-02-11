@@ -1,3 +1,3 @@
-export * from './pagenation.helper';
+export * from './page.helper';
 export * from './user.helper';
-export * from './sortMap';
+export * from './sort.helper';

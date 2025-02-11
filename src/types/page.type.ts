@@ -5,7 +5,7 @@ export type PageInfo = {
     totalItems: number;
 }
 
-export type PageNationFeilds = {
+export type PaginationLinks = {
     nextPage: string | null,
     prevPage: string | null,
     firstPage: string | null,

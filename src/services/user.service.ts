@@ -1,10 +1,9 @@
-import { Op } from "sequelize";
 import { FunctionStatus, Roles } from "../enums";
 import { getPaginationParams, getUserFilterArguments, getUserSortArgs } from "../helpers";
 import { IUser } from "../interfaces";
 import { User } from "../models";
 import { UserFetchResult, UserFilterQuery, UserInsertArgs, UserToShow, UserUpdateArgs } from "../types";
-import { hashPassword, logFunctionInfo, logger } from "../utils";
+import { hashPassword, logFunctionInfo } from "../utils";
 
 
 
@@ -163,8 +162,6 @@ export const deleteUserById = async (id: string): Promise<boolean> => {
         const deletedUser = await User.destroy({
             where: { id }
         });
-
-        logger.info(deletedUser);
 
         if (deletedUser) logFunctionInfo(functionName, FunctionStatus.SUCCESS);
         return deletedUser !== 0;

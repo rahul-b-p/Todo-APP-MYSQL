@@ -1,6 +1,5 @@
 import { Op } from "sequelize";
 import { responseMessage } from "../constants";
-import { Roles } from "../enums";
 import { UserFilters, UserUpdateBody, UserUpdateRequirments } from "../types";
 
 

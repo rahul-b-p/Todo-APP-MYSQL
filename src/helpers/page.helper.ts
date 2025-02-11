@@ -1,13 +1,13 @@
 import { FunctionStatus } from "../enums";
-import { PageInfo, PageNationFeilds, PaginationParams } from "../types";
+import { PageInfo, PaginationLinks, PaginationParams } from "../types";
 import { logFunctionInfo } from "../utils/logger";
 
 
 /**
- * Retrieves pagination fields, including URLs for the next page, previous page, and first page, 
+ * Retrieves pagination links, including URLs for the next page, previous page, and first page, 
  * based on the provided page information and current page URL.
 */
-export const pagenate = (pageInfo: PageInfo, url: string): PageNationFeilds => {
+export const getPaginationLinks = (pageInfo: PageInfo, url: string): PaginationLinks => {
     const functionName = 'pagenate';
     logFunctionInfo(functionName, FunctionStatus.START);
 
@@ -17,7 +17,7 @@ export const pagenate = (pageInfo: PageInfo, url: string): PageNationFeilds => {
         return url.replace('?pageNo=1', `?pageNo=${pageNo}`)
     }
 
-    const pageNationFeilds: PageNationFeilds = {
+    const paginationLinks: PaginationLinks = {
         nextPage: null,
         prevPage: null,
         firstPage: null,
@@ -25,16 +25,16 @@ export const pagenate = (pageInfo: PageInfo, url: string): PageNationFeilds => {
     };
 
     if (page > 1) {
-        pageNationFeilds.prevPage = Pageurl(page - 1);
-        pageNationFeilds.firstPage = Pageurl(1);
+        paginationLinks.prevPage = Pageurl(page - 1);
+        paginationLinks.firstPage = Pageurl(1);
     }
     if (page < totalPages) {
-        pageNationFeilds.lastPage = Pageurl(totalPages);
-        pageNationFeilds.nextPage = Pageurl(page + 1);
+        paginationLinks.lastPage = Pageurl(totalPages);
+        paginationLinks.nextPage = Pageurl(page + 1);
     }
 
     logFunctionInfo(functionName, FunctionStatus.SUCCESS);
-    return pageNationFeilds;
+    return paginationLinks;
 }
 
 /**

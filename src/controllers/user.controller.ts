@@ -7,7 +7,7 @@ import { deleteUserById, fetchUsers, findUserById, findUserDatasById, insertUser
 import { UserFilterQuery, UserInsertArgs, UserUpdateBody } from "../types";
 import { logFunctionInfo, logger, sendCustomResponse } from "../utils";
 import { checkEmailValidity, validateEmailUniqueness } from "../validators";
-import { getUpdateRequirments, pagenate } from "../helpers";
+import { getUpdateRequirments, getPaginationLinks } from "../helpers";
 
 
 
@@ -63,7 +63,7 @@ export const readAllUsers = async (req: customRequestWithPayload<{}, any, any, U
         let PageNationFeilds;
         if (fetchResult) {
             const { data, ...pageInfo } = fetchResult
-            PageNationFeilds = pagenate(pageInfo, req.originalUrl);
+            PageNationFeilds = getPaginationLinks(pageInfo, req.originalUrl);
         }
 
         logFunctionInfo(functionName, FunctionStatus.SUCCESS);
