@@ -87,6 +87,6 @@ Todo.init(
 
 //Establish Foreign Key Relationship
 Todo.belongsTo(User, { as: 'user', foreignKey: 'userId' });
-User.hasMany(Todo, { foreignKey: "userId" });
+User.hasMany(Todo, { foreignKey: 'userId', as: 'todos' });
 
 export default Todo;

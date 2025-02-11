@@ -1,7 +1,7 @@
 import { FunctionStatus, Roles } from "../enums";
 import { getPaginationParams, getUserFilterArguments, getUserSortArgs } from "../helpers";
 import { IUser } from "../interfaces";
-import { User } from "../models";
+import { Todo, User } from "../models";
 import { UserFetchResult, UserFilterQuery, UserInsertArgs, UserToShow, UserUpdateArgs } from "../types";
 import { logFunctionInfo } from "../utils";
 
@@ -132,7 +132,14 @@ export const findUserDatasById = async (id: string): Promise<UserToShow | null> 
     const functionName = findUserDatasById.name;
     try {
         const user = await User.findOne({
-            where: { id }
+            where: { id },
+            include: [{
+                model: Todo,
+                as: 'todos',  // Alias for the association
+                required: false,  // To get even users without todos
+                attributes: ['id', 'title', 'description', 'dueAt', 'completed'],  // Select only necessary todo fields
+                where: { isDeleted: false },  // Only include non-deleted todos
+            }],
         });
 
         if (!user) return null;
