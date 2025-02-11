@@ -1,6 +1,5 @@
 import { config } from "dotenv";
 import { errorMessage } from "../constants";
-import { logger } from "../utils";
 
 config();
 

@@ -53,7 +53,7 @@ export const checkRefreshTokenExistsById = async (id: string, refreshToken: stri
     logFunctionInfo(functionName, FunctionStatus.START);
 
     try {
-        const existingUser = await User.findOne({
+        const existingUser = await User.scope("withRefreshToken").findOne({
             where: { id }
         });
 

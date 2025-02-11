@@ -66,7 +66,14 @@ User.init({
             unique: true,
             fields: ['email']  // Explicitly define the unique index on 'email'
         },
-    ]
+    ],
+    defaultScope: {
+        attributes: { exclude: ["password","refreshToken"] }, // Automatically exclude password
+    },
+    scopes: {
+        withPassword: { attributes: { include: ["password"] } },
+        withRefreshToken: { attributes: { include: ["refreshToken"] } }
+    },
 }
 );
 
