@@ -11,7 +11,7 @@ import { logFunctionInfo, logger } from "../utils";
 /**
  * TO insert a new todo
 */
-export const insertTodo = async (userId: number, todoToInsert: InsertTodoArgs): Promise<ITodo> => {
+export const insertTodo = async (userId: string, todoToInsert: InsertTodoArgs): Promise<ITodo> => {
     const functionName = insertTodo.name;
     logFunctionInfo(functionName, FunctionStatus.START);
 

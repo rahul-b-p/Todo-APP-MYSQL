@@ -3,10 +3,10 @@ import { Optional } from "sequelize";
 
 
 export interface ITodo {
-    id: number;
+    id: string;
     title: string;
     description: string;
-    userId: number;
+    userId: string;
     dueAt: Date;
     completed?: boolean;
     isDeleted?: boolean;

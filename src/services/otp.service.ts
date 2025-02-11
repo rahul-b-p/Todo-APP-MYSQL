@@ -8,7 +8,7 @@ import { logFunctionInfo } from "../utils"
 /**
  * Generates an OTP for the given user and saves it in the database with a 5-minute expiration time.
  */
-export const saveOtp = async (otp: string, userId: number): Promise<string> => {
+export const saveOtp = async (otp: string, userId: string): Promise<string> => {
     const functionName = saveOtp.name;
     logFunctionInfo(functionName, FunctionStatus.START);
     try {

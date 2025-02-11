@@ -2,8 +2,8 @@ import { Optional } from "sequelize";
 
 
 export interface IOtp {
-    id: number
-    userId: number;
+    id: string;
+    userId: string;
     otp: string;
     expiresAt?: Date;
 }

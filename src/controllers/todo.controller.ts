@@ -27,7 +27,7 @@ export const createTodo = async (req: customRequestWithPayload<{}, any, InsertTo
         const dateStatus = compareDatesWithCurrentDate(dueDate);
         if (dateStatus == DateStatus.Past) throw new BadRequestError(errorMessage.PAST_DATE_NOT_ALLOWED);
 
-        const insertedTodo = await insertTodo(Number(userId), req.body);
+        const insertedTodo = await insertTodo(userId, req.body);
 
         logFunctionInfo(functionName, FunctionStatus.SUCCESS);
         res.status(200).json(await sendCustomResponse(responseMessage.TODO_CREATED, insertedTodo));
@@ -56,7 +56,7 @@ export const createUserTodo = async (req: customRequestWithPayload<{ userId: str
         const dateStatus = compareDatesWithCurrentDate(dueDate);
         if (dateStatus == DateStatus.Past) throw new BadRequestError(errorMessage.PAST_DATE_NOT_ALLOWED);
 
-        const insertedTodo = await insertTodo(Number(userId), req.body);
+        const insertedTodo = await insertTodo(userId, req.body);
 
         logFunctionInfo(functionName, FunctionStatus.SUCCESS);
         res.status(200).json(await sendCustomResponse(responseMessage.TODO_CREATED, insertedTodo));

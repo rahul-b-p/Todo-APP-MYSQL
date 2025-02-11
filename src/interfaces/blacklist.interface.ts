@@ -1,7 +1,7 @@
 import { Optional } from 'sequelize'
 
 export interface IBlackList {
-    id: number;
+    id: string;
     token: string;
     expireAt: Date;
 };

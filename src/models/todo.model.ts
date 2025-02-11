@@ -5,10 +5,10 @@ import { sequelize } from "../config";
 
 
 class Todo extends Model<ITodo, ITodoCreation> implements ITodo {
-    public id!: number;
+    public id!: string;
     public title!: string;
     public description!: string;
-    public userId!: number;
+    public userId!: string;
     public dueAt!: Date;
     public completed!: boolean;
     public isDeleted!: boolean;
@@ -21,8 +21,8 @@ class Todo extends Model<ITodo, ITodoCreation> implements ITodo {
 Todo.init(
     {
         id: {
-            type: DataTypes.INTEGER.UNSIGNED,
-            autoIncrement: true,
+            type: DataTypes.UUID,
+            defaultValue:DataTypes.UUIDV4,
             primaryKey: true
         },
         title: {
@@ -34,7 +34,7 @@ Todo.init(
             allowNull: false,
         },
         userId: {
-            type: DataTypes.INTEGER.UNSIGNED,
+            type: DataTypes.UUID,
             allowNull: false,
             references: {
                 model: User,

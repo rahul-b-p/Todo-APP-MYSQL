@@ -6,7 +6,7 @@ import { Roles } from "../enums";
 
 
 class User extends Model<IUser, IUserCreation> implements IUser {
-    public id!: number;
+    public id!: string;
     public username!: string;
     public email!: string;
     public password!: string;
@@ -19,8 +19,8 @@ class User extends Model<IUser, IUserCreation> implements IUser {
 
 User.init({
     id: {
-        type: DataTypes.INTEGER.UNSIGNED,
-        autoIncrement: true,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true
     },
     username: {
