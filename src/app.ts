@@ -4,7 +4,7 @@ import { createDefultAdmin, logger } from './utils';
 import { morganLogger } from './config';
 import { connectMySql, deleteExpiredOtps, deleteExpiredTokens, synchronizeDB } from './database';
 import { accessTokenAuth, ErrorHandler } from './middlewares';
-import { authRouter, profileRouter } from './routers';
+import { authRouter, profileRouter, userRouter } from './routers';
 
 
 
@@ -33,6 +33,7 @@ const InitializeApp = async () => {
         // Using routers
         app.use('/auth', authRouter);
         app.use('/me', accessTokenAuth, profileRouter);
+        app.use('/user', accessTokenAuth, userRouter);
 
 
         // Using custom error handlers on application

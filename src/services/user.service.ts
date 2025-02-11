@@ -1,8 +1,10 @@
+import { Op } from "sequelize";
 import { FunctionStatus, Roles } from "../enums";
+import { getPaginationParams, getUserFilterArguments, getUserSortArgs } from "../helpers";
 import { IUser } from "../interfaces";
 import { User } from "../models";
-import { UserInsertArgs, UserToShow, UserUpdateArgs } from "../types";
-import { hashPassword, logFunctionInfo } from "../utils";
+import { UserFetchResult, UserFilterQuery, UserInsertArgs, UserToShow, UserUpdateArgs } from "../types";
+import { hashPassword, logFunctionInfo, logger } from "../utils";
 
 
 
@@ -99,6 +101,7 @@ export const findUserById = async (id: string): Promise<IUser | null> => {
     }
 }
 
+
 /**
  * Updates an existing user data by its unique id.
 */
@@ -112,11 +115,9 @@ export const updateUserById = async (id: string, userToUpdate: UserUpdateArgs): 
         if (updatedStatus[0] < 1) return null;
 
         const updatedUser = await User.findOne({
-            where: { id }
+            where: { id },
+            attributes: { exclude: ['password', 'refreshToken'] }
         });
-
-        delete (updatedUser as any).password;
-        delete (updatedUser as any).refreshToken;
 
 
         logFunctionInfo(functionName, FunctionStatus.SUCCESS);
@@ -128,12 +129,15 @@ export const updateUserById = async (id: string, userToUpdate: UserUpdateArgs): 
 };
 
 
+/**
+ * To find all usensitive data of a user
+ */
 export const findUserDatasById = async (id: string): Promise<UserToShow | null> => {
     const functionName = findUserDatasById.name;
     try {
         const user = await User.findOne({
             where: { id },
-            attributes: ['id', 'username', 'email', 'role', 'createdAt', 'updatedAt', 'verified'],
+            attributes: { exclude: ['password', 'refreshToken'] },
         });
 
         if (!user) return null;
@@ -159,12 +163,87 @@ export const deleteUserById = async (id: string): Promise<boolean> => {
         const deletedUser = await User.destroy({
             where: { id }
         });
-       
+
+        logger.info(deletedUser);
+
         if (deletedUser) logFunctionInfo(functionName, FunctionStatus.SUCCESS);
-        return deletedUser !== null;
+        return deletedUser !== 0;
     } catch (error: any) {
 
         logFunctionInfo(functionName, FunctionStatus.FAIL, error.message);
         throw new Error(error.message);
     }
 }
+
+
+/**
+ * To aggregate filter count using Sequelize
+ */
+export const getUserFilterCount = async (filter: Record<string, any>): Promise<number> => {
+    logFunctionInfo(getUserFilterCount.name, FunctionStatus.START);
+    try {
+        return await User.count({ where: filter });
+    } catch (error) {
+        throw error;
+    }
+};
+
+
+/**
+ * To filter users with search, sort, and pagination using Sequelize
+ */
+export const filterUsers = async (filter: Record<string, any>, sort: Record<string, string>, skip: number, limit: number): Promise<UserToShow[]> => {
+    logFunctionInfo(filterUsers.name, FunctionStatus.START);
+    try {
+        return await User.findAll({
+            where: filter,
+            order: [[sort.key, sort.order]],
+            offset: skip,
+            limit: limit,
+            attributes: ['id', 'username', 'email', 'role', 'createdAt', 'updatedAt', 'verified'],
+        }) as unknown[] as UserToShow[];
+    } catch (error) {
+        throw error;
+    }
+};
+
+
+/**
+ * Fetches all users using Sequelize with filtering, sorting, and pagination.
+ */
+export const fetchUsers = async (query: UserFilterQuery): Promise<UserFetchResult | null> => {
+    const functionName = fetchUsers.name;
+    logFunctionInfo(functionName, FunctionStatus.START);
+
+    try {
+        const { pageNo, pageLimit, sortKey, ...filterFeilds } = query;
+
+        // Build filter conditions
+        const filter = getUserFilterArguments(filterFeilds);
+
+        // Get sorting and pagination parameters
+        const sort = JSON.parse(getUserSortArgs(sortKey));
+        const { limit, page, skip } = getPaginationParams(pageNo, pageLimit);
+
+        // Fetch total count
+        const totalItems = await getUserFilterCount(filter);
+
+        // Fetch users
+        const users: UserToShow[] = await filterUsers(filter, sort, skip, limit);
+
+        const totalPages = Math.ceil(totalItems / limit);
+        const fetchResult: UserFetchResult = {
+            page,
+            pageSize: limit,
+            totalPages,
+            totalItems,
+            data: users
+        };
+
+        logFunctionInfo(functionName, FunctionStatus.SUCCESS);
+        return users.length > 0 ? fetchResult : null;
+    } catch (error: any) {
+        logFunctionInfo(functionName, FunctionStatus.FAIL, error.message);
+        throw new Error(error.message);
+    }
+};
