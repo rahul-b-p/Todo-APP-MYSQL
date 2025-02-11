@@ -43,11 +43,11 @@ export const updateProfile = async (req: customRequestWithPayload<{}, any, UserU
     logFunctionInfo(functionName, FunctionStatus.START);
 
     try {
-        const { role, email } = req.body;
+        const { role, email, verified } = req.body;
         const id = req.payload?.id as string;
         const existingUser = await findUserById(id) as IUser;
 
-        if (role) {
+        if (role || verified) {
             if (existingUser.role !== Roles.ADMIN) throw new ForbiddenError(errorMessage.INSUFFICIENT_PRIVILEGES);
         }
 
