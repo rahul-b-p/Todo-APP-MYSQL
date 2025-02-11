@@ -1,9 +1,9 @@
 import { errorMessage } from "../constants";
 import { FetchType, FunctionStatus } from "../enums";
-import { convertTodoToShow, getDateFromStrings, getPaginationParams, getTodoFilter, getTodoSortArgs } from "../helpers";
+import { getDateFromStrings, getPaginationParams, getTodoFilter, getTodoSortArgs } from "../helpers";
 import { ITodo } from "../interfaces";
 import { Todo, User } from "../models";
-import { InsertTodoArgs, TodoFetchResult, TodoFilterQuery, TodoToShow, UpdateTodoArgs } from "../types";
+import { InsertTodoArgs, TodoFetchResult, TodoFilterQuery, TodoScope, TodoToShow, UpdateTodoArgs } from "../types";
 import { logFunctionInfo, logger } from "../utils";
 
 
@@ -56,15 +56,15 @@ export const getTodoFilterCount = async (filter: Record<string, string>): Promis
 /**
  * To aggreagate user by filter,search, sort and pagenating
  */
-export const filterTodos = async (filter: Record<string, any>, sort: Record<string, any>, skip: number, limit: number): Promise<TodoToShow[]> => {
+export const filterTodos = async (filter: Record<string, any>, sort: Record<string, any>, skip: number, limit: number, scope: TodoScope): Promise<TodoToShow[]> => {
     logFunctionInfo(filterTodos.name, FunctionStatus.START)
     try {
-        const todos = await Todo.findAll({
+        const todoToFind = scope ? Todo.scope(scope) : Todo;
+        const todos = await todoToFind.findAll({
             where: filter,
             order: [[sort.key, sort.order]],  // Dynamic sorting, assuming `sort` contains { key, order }
             offset: skip,
             limit: limit,
-            attributes: { exclude: ['isDeleted', 'deletedAt'] },
             include: [
                 {
                     model: User,
@@ -75,7 +75,7 @@ export const filterTodos = async (filter: Record<string, any>, sort: Record<stri
         });
 
         logFunctionInfo(filterTodos.name, FunctionStatus.SUCCESS);
-        return todos.map(todo => convertTodoToShow(todo));
+        return todos as unknown as TodoToShow[];
     } catch (error) {
         throw error;
     }
@@ -98,7 +98,9 @@ export const fetchTodos = async (fetchType: FetchType, query: TodoFilterQuery): 
 
         const totalItems = await getTodoFilterCount(filter)
 
-        const allTodos: TodoToShow[] = await filterTodos(filter, sort, skip, limit)
+        const scope: TodoScope = fetchType == FetchType.TRASH ? "trashData" : null;
+
+        const allTodos: TodoToShow[] = await filterTodos(filter, sort, skip, limit, scope)
 
         const totalPages = Math.ceil(totalItems / limit);
         const fetchResult: TodoFetchResult = {
@@ -158,7 +160,6 @@ export const updateTodoById = async (id: string, updateBody: UpdateTodoArgs): Pr
 
         const updatedTodo = await Todo.findOne({
             where: { id },
-            attributes: { exclude: ['isDeleted', 'deletedAt'] }
         });
 
         logFunctionInfo(functionName, FunctionStatus.SUCCESS);
@@ -178,7 +179,7 @@ export const softDeleteTodoById = async (id: string): Promise<Date | undefined |
     logFunctionInfo(functionName, FunctionStatus.START);
 
     try {
-        const SoftDeletionStatus = await Todo.update({
+        const SoftDeletionStatus = await Todo.scope("softDeletion").update({
             isDeleted: true,
             deletedAt: new Date()
         }, {
@@ -187,7 +188,7 @@ export const softDeleteTodoById = async (id: string): Promise<Date | undefined |
 
         if (SoftDeletionStatus[0] < 1) return null;
 
-        const softDeletedTodo = await Todo.findOne({
+        const softDeletedTodo = await Todo.scope("softDeletion").findOne({
             where: { id }
         });
 
@@ -210,7 +211,6 @@ export const fetchTodoDataById = async (_id: string): Promise<TodoToShow | null>
     try {
         const todo = await Todo.findOne({
             where: { id: _id, isDeleted: false },
-            attributes: { exclude: ['isDeleted', 'deletedAt'] },
             include: [
                 {
                     model: User,
@@ -223,7 +223,7 @@ export const fetchTodoDataById = async (_id: string): Promise<TodoToShow | null>
         if (!todo) return null;
 
         logFunctionInfo(functionName, FunctionStatus.SUCCESS);
-        return convertTodoToShow(todo);
+        return todo as unknown as TodoToShow;
     } catch (error: any) {
         logFunctionInfo(functionName, FunctionStatus.FAIL, error.message);
         throw new Error(error.message);
@@ -235,11 +235,13 @@ export const fetchTodoDataById = async (_id: string): Promise<TodoToShow | null>
  * To restore soft deleted todo using its unique id
  */
 export const restoreSoftDeletedTodoById = async (id: string): Promise<ITodo | null> => {
-    const functionName = softDeleteTodoById.name;
+    const functionName = restoreSoftDeletedTodoById.name;
     logFunctionInfo(functionName, FunctionStatus.START);
 
     try {
-        const restorationStatus = await Todo.update({
+
+
+        const restorationStatus = await Todo.scope("softDeletion").update({
             isDeleted: false,
             deletedAt: null
         }, {
@@ -248,7 +250,7 @@ export const restoreSoftDeletedTodoById = async (id: string): Promise<ITodo | nu
 
         if (restorationStatus[0] < 1) return null;
 
-        const restoredTodo = await Todo.findOne({
+        const restoredTodo = await Todo.scope('softDeletion').findOne({
             where: { id }
         });
 

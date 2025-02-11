@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { UserAuthBody, UserPasswordResetBody, UserSignUpBody, VerifyUserBody } from "../types";
 import { FunctionStatus } from "../enums";
-import { comparePassword, logFunctionInfo, logger, sendCustomResponse } from "../utils";
-import { blacklistToken, findUserByEmail, findUserById, insertUser, resetPasswordById, saveOtp, sendEmailVerificationMail, sendOtpForPasswordReset, signNewTokens, updateUserById, verfyAccountAndSignNewTokens, verifyOtp } from "../services";
+import { logFunctionInfo, logger, sendCustomResponse } from "../utils";
+import { blacklistToken, findUserByEmail, findUserById, insertUser, isValidPassword, resetPasswordById, saveOtp, sendEmailVerificationMail, sendOtpForPasswordReset, signNewTokens, updateUserById, verfyAccountAndSignNewTokens, verifyOtp } from "../services";
 import { AuthenticationError, BadRequestError, ConflictError, InternalServerError, NotFoundError } from "../errors";
 import { errorMessage, responseMessage } from "../constants";
 import { checkEmailValidity, validateEmailUniqueness } from "../validators";
@@ -23,7 +23,7 @@ export const login = async (req: Request<{}, any, UserAuthBody>, res: Response, 
         const existingUser = await findUserByEmail(email);
         if (!existingUser) throw new NotFoundError(errorMessage.USER_NOT_FOUND);
 
-        const isVerifiedPassword = await comparePassword(password, existingUser.password);
+        const isVerifiedPassword = await isValidPassword(existingUser, password);
         if (!isVerifiedPassword) throw new AuthenticationError(errorMessage.INVALID_PASSWORD);
 
         if (!existingUser.verified) {

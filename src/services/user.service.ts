@@ -1,9 +1,9 @@
 import { FunctionStatus, Roles } from "../enums";
 import { getPaginationParams, getUserFilterArguments, getUserSortArgs } from "../helpers";
 import { IUser } from "../interfaces";
-import { User } from "../models";
+import { Todo, User } from "../models";
 import { UserFetchResult, UserFilterQuery, UserInsertArgs, UserToShow, UserUpdateArgs } from "../types";
-import { hashPassword, logFunctionInfo } from "../utils";
+import { logFunctionInfo } from "../utils";
 
 
 
@@ -38,8 +38,6 @@ export const insertUser = async (user: UserInsertArgs): Promise<IUser> => {
     const functionName = insertUser.name;
     logFunctionInfo(functionName, FunctionStatus.START);
     try {
-        user.password = await hashPassword(user.password);
-
         if (!user.role) {
             user.role = Roles.USER;
         }
@@ -50,7 +48,6 @@ export const insertUser = async (user: UserInsertArgs): Promise<IUser> => {
         // Hiding sensitive fields
         const userWithoutSensitiveInfo = newUser.get({ plain: true });
         delete (userWithoutSensitiveInfo as any).password;
-        delete (userWithoutSensitiveInfo as any).refreshToken;
 
         logFunctionInfo(functionName, FunctionStatus.SUCCESS);
         return userWithoutSensitiveInfo as IUser;
@@ -64,12 +61,13 @@ export const insertUser = async (user: UserInsertArgs): Promise<IUser> => {
 /**
  * Finds an existing user by its unique email adress.
 */
-export const findUserByEmail = async (email: string): Promise<IUser | null> => {
+export const findUserByEmail = async (email: string): Promise<User | null> => {
     const functionName = findUserByEmail.name;
     logFunctionInfo(functionName, FunctionStatus.START);
     try {
-        const user = await User.findOne({
-            where: { email }
+        const user = await User.scope("withPassword").findOne({
+            where: { email },
+
         });
 
         logFunctionInfo(functionName, FunctionStatus.SUCCESS);
@@ -114,8 +112,7 @@ export const updateUserById = async (id: string, userToUpdate: UserUpdateArgs): 
         if (updatedStatus[0] < 1) return null;
 
         const updatedUser = await User.findOne({
-            where: { id },
-            attributes: { exclude: ['password', 'refreshToken'] }
+            where: { id }
         });
 
 
@@ -136,7 +133,13 @@ export const findUserDatasById = async (id: string): Promise<UserToShow | null> 
     try {
         const user = await User.findOne({
             where: { id },
-            attributes: { exclude: ['password', 'refreshToken'] },
+            include: [{
+                model: Todo,
+                as: 'todos',  // Alias for the association
+                required: false,  // To get even users without todos
+                attributes: ['id', 'title', 'description', 'dueAt', 'completed'],  // Select only necessary todo fields
+                where: { isDeleted: false },  // Only include non-deleted todos
+            }],
         });
 
         if (!user) return null;
@@ -197,7 +200,6 @@ export const filterUsers = async (filter: Record<string, any>, sort: Record<stri
             order: [[sort.key, sort.order]],
             offset: skip,
             limit: limit,
-            attributes: ['id', 'username', 'email', 'role', 'createdAt', 'updatedAt', 'verified'],
         }) as unknown[] as UserToShow[];
     } catch (error) {
         throw error;

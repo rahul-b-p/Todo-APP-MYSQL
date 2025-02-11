@@ -4,10 +4,20 @@ import { IUser } from "../interfaces";
 import { signAccessToken, signRefreshToken } from "../jwt";
 import { User } from "../models";
 import { TokenResonse, UserUpdateArgs } from "../types";
-import { hashPassword, logFunctionInfo } from "../utils";
+import { logFunctionInfo } from "../utils";
 import { updateUserById } from "./user.service";
 
 
+/**
+ * To match password 
+ */
+export const isValidPassword = async (user: User, password: string) => {
+    try {
+        return await user.checkPassword(password)
+    } catch (error) {
+        throw error;
+    }
+}
 /**
  * To sign tokens, and save refresh token
  */
@@ -43,7 +53,7 @@ export const checkRefreshTokenExistsById = async (id: string, refreshToken: stri
     logFunctionInfo(functionName, FunctionStatus.START);
 
     try {
-        const existingUser = await User.findOne({
+        const existingUser = await User.scope("withRefreshToken").findOne({
             where: { id }
         });
 
@@ -88,13 +98,12 @@ export const verfyAccountAndSignNewTokens = async (userData: IUser): Promise<Tok
 }
 
 
-export const resetPasswordById = async (id: string, confirmPassword: string): Promise<void> => {
+export const resetPasswordById = async (id: string, password: string): Promise<void> => {
     const functionName = resetPasswordById.name;
     logFunctionInfo(functionName, FunctionStatus.START);
 
     try {
-        const password = await hashPassword(confirmPassword);
-        const updateBody: UserUpdateArgs = { password: password };
+        const updateBody: UserUpdateArgs = { password };
 
         const updatedUser = await updateUserById(id, updateBody);
         if (!updatedUser) throw new Error(errorMessage.USER_EXISTANCE_FAILURE);

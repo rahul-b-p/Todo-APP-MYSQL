@@ -22,7 +22,7 @@ Todo.init(
     {
         id: {
             type: DataTypes.UUID,
-            defaultValue:DataTypes.UUIDV4,
+            defaultValue: DataTypes.UUIDV4,
             primaryKey: true
         },
         title: {
@@ -66,11 +66,27 @@ Todo.init(
         sequelize,
         tableName: 'Todo',
         timestamps: true,
+        defaultScope: {
+            attributes: {
+                exclude: ["isDeleted", "deletedAt"]
+            },
+            where: {
+                isDeleted: false
+            }
+        },
+        scopes: {
+            softDeletion: {
+                attributes: { include: ["isDeleted", "deletedAt"] }
+            },
+            trashData: {
+                attributes: { include: ["deletedAt"] }
+            }
+        }
     }
 );
 
 //Establish Foreign Key Relationship
 Todo.belongsTo(User, { as: 'user', foreignKey: 'userId' });
-User.hasMany(Todo, { foreignKey: "userId" });
+User.hasMany(Todo, { foreignKey: 'userId', as: 'todos' });
 
 export default Todo;
