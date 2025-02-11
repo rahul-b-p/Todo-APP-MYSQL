@@ -39,7 +39,7 @@ export type UserPasswordResetBody = VerifyUserBody & {
 export type UserUpdateBody = Omit<UserUpdateArgs, 'password' | 'refreshToken'>;
 
 export type UserToShow = UserAuthBody & {
-    _id: number;
+    id: number;
     role: Roles;
     verified: boolean
     createdAt: Date;

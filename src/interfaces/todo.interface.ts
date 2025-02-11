@@ -6,10 +6,10 @@ export interface ITodo {
     id: number;
     title: string;
     description: string;
-    createdBy: number;
+    userId: number;
     dueAt: Date;
-    completed: boolean;
-    isDeleted: boolean;
+    completed?: boolean;
+    isDeleted?: boolean;
     deletedAt?: Date | null;
 }
 
