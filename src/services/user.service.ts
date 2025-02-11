@@ -62,7 +62,7 @@ export const insertUser = async (user: UserInsertArgs): Promise<IUser> => {
 /**
  * Finds an existing user by its unique email adress.
 */
-export const findUserByEmail = async (email: string): Promise<IUser | null> => {
+export const findUserByEmail = async (email: string): Promise<User | null> => {
     const functionName = findUserByEmail.name;
     logFunctionInfo(functionName, FunctionStatus.START);
     try {

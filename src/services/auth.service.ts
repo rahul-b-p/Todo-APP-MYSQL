@@ -9,6 +9,16 @@ import { updateUserById } from "./user.service";
 
 
 /**
+ * To match password 
+ */
+export const isValidPassword = async (user: User, password: string) => {
+    try {
+        return await user.checkPassword(password)
+    } catch (error) {
+        throw error;
+    }
+}
+/**
  * To sign tokens, and save refresh token
  */
 export const signNewTokens = async (userData: IUser): Promise<TokenResonse> => {
