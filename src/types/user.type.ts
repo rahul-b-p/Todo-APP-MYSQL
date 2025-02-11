@@ -1,5 +1,6 @@
 
-import { Roles } from "../enums";
+import { Roles, UserSortKeys } from "../enums";
+import { PageFilter, PageInfo } from "./page.type";
 
 
 export type UserAuthBody = {
@@ -35,7 +36,7 @@ export type UserPasswordResetBody = VerifyUserBody & {
     confirmPassword: string;
 }
 
-export type UserUpdateBody = Partial<Omit<UserInsertArgs, 'password'>>;
+export type UserUpdateBody = Omit<UserUpdateArgs, 'password' | 'refreshToken'>;
 
 export type UserToShow = UserAuthBody & {
     _id: number;
@@ -44,4 +45,25 @@ export type UserToShow = UserAuthBody & {
     createdAt: Date;
     updatedAt: Date;
 
+}
+
+export type UserUpdateRequirments = {
+    message: string;
+    arguments: UserUpdateArgs;
+    mailTo?: string[];
+}
+
+export type UserFilterQuery = PageFilter & {
+    role?: Roles;
+    sortKey?: UserSortKeys;
+    username?: string;
+}
+
+export type UserFilters = {
+    role?: Roles;
+    username?: string;
+}
+
+export type UserFetchResult = PageInfo & {
+    data: UserToShow[];
 }

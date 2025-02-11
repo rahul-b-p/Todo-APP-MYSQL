@@ -1,8 +1,9 @@
 import { z } from "zod";
 import { errorMessage } from "../constants";
 import { passwordSchema } from "./password.schema";
-import { Roles } from "../enums";
+import { Roles, UserSortKeys } from "../enums";
 import { otpSchema } from "./otp.schema";
+import { pageLimitSchema, pageNoSchema } from "./page.schema";
 
 
 
@@ -58,7 +59,6 @@ export const accountDeletionQuerySchema = z.object({
 }).strict();
 
 
-
 export const userUpdateSchema = z.object({
     username: z.string({ message: errorMessage.INVALID_USERNAME }).min(4, errorMessage.INVALID_USERNAME_LENGTH).optional(),
     email: z.string({ message: errorMessage.EMAIL_REQUIRED }).email(errorMessage.INVALID_EMAIL).optional(),
@@ -68,3 +68,13 @@ export const userUpdateSchema = z.object({
         data.email || data.role || data.username,
         { message: errorMessage.AT_LEAST_ONE_FIELD_REQUIRED_FOR_UPDATE }
     );
+
+
+
+export const userFilterQuerySchema = z.object({
+    pageNo: pageNoSchema,
+    pageLimit: pageLimitSchema,
+    role: z.string().optional(),
+    sortKey: z.nativeEnum(UserSortKeys, { message: errorMessage.INVALID_SORT_KEY }).optional(),
+    username: z.string().optional()
+}).strict();
