@@ -51,3 +51,20 @@ export const resetPasswordSchema = z.object({
         path: ["confirmPassword"],
     }
 );
+
+
+export const accountDeletionQuerySchema = z.object({
+    otp: otpSchema
+}).strict();
+
+
+
+export const userUpdateSchema = z.object({
+    username: z.string({ message: errorMessage.INVALID_USERNAME }).min(4, errorMessage.INVALID_USERNAME_LENGTH).optional(),
+    email: z.string({ message: errorMessage.EMAIL_REQUIRED }).email(errorMessage.INVALID_EMAIL).optional(),
+    role: z.nativeEnum(Roles, { message: errorMessage.INVALID_ROLE }).optional()
+}).strict()
+    .refine(data =>
+        data.email || data.role || data.username,
+        { message: errorMessage.AT_LEAST_ONE_FIELD_REQUIRED_FOR_UPDATE }
+    );

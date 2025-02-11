@@ -3,8 +3,8 @@ import './config/env.config';
 import { createDefultAdmin, logger } from './utils';
 import { morganLogger } from './config';
 import { connectMySql, deleteExpiredOtps, deleteExpiredTokens, synchronizeDB } from './database';
-import { ErrorHandler } from './middlewares';
-import { authRouter } from './routers';
+import { accessTokenAuth, ErrorHandler } from './middlewares';
+import { authRouter, profileRouter } from './routers';
 
 
 
@@ -31,7 +31,8 @@ const InitializeApp = async () => {
         app.use(express.json());
 
         // Using routers
-        app.use('/auth', authRouter)
+        app.use('/auth', authRouter);
+        app.use('/me', accessTokenAuth, profileRouter);
 
 
         // Using custom error handlers on application

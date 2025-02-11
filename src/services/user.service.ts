@@ -1,7 +1,7 @@
 import { FunctionStatus, Roles } from "../enums";
 import { IUser } from "../interfaces";
 import { User } from "../models";
-import { UserInsertArgs, UserUpdateArgs } from "../types";
+import { UserInsertArgs, UserToShow, UserUpdateArgs } from "../types";
 import { hashPassword, logFunctionInfo } from "../utils";
 
 
@@ -126,3 +126,45 @@ export const updateUserById = async (id: string, userToUpdate: UserUpdateArgs): 
         throw new Error(error.message);
     }
 };
+
+
+export const findUserDatasById = async (id: string): Promise<UserToShow | null> => {
+    const functionName = findUserDatasById.name;
+    try {
+        const user = await User.findOne({
+            where: { id },
+            attributes: ['id', 'username', 'email', 'role', 'createdAt', 'updatedAt', 'verified'],
+        });
+
+        if (!user) return null;
+
+        logFunctionInfo(functionName, FunctionStatus.SUCCESS);
+        return user as unknown as UserToShow;
+    } catch (error: any) {
+        logFunctionInfo(functionName, FunctionStatus.FAIL, error.message);
+        throw new Error(error.message);
+    }
+};
+
+
+
+/**
+ * Delets an existing user data by its unique id.
+*/
+export const deleteUserById = async (id: string): Promise<boolean> => {
+    const functionName = deleteUserById.name;
+    logFunctionInfo(functionName, FunctionStatus.START);
+
+    try {
+        const deletedUser = await User.destroy({
+            where: { id }
+        });
+       
+        if (deletedUser) logFunctionInfo(functionName, FunctionStatus.SUCCESS);
+        return deletedUser !== null;
+    } catch (error: any) {
+
+        logFunctionInfo(functionName, FunctionStatus.FAIL, error.message);
+        throw new Error(error.message);
+    }
+}
