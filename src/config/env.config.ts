@@ -43,7 +43,7 @@ export const DB_USERNAME = process.env.DB_USERNAME as string;
 export const DB_PASSWORD = process.env.DB_PASSWORD as string;
 
 
-export const HASH_SALT_ROUNDS = process.env.HASH_SALT_ROUNDS as string;
+export const HASH_SALT_ROUNDS = Number(process.env.HASH_SALT_ROUNDS) as number;
 
 export const ADMIN_USERNAME = process.env.ADMIN_USERNAME as string;
 export const ADMIN_EMAIL = process.env.ADMIN_EMAIL as string;

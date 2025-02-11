@@ -1,6 +1,7 @@
 import { DataTypes, Model } from "sequelize";
+import bcrypt from 'bcrypt';
 import { IUser, IUserCreation } from "../interfaces";
-import { sequelize } from "../config";
+import { HASH_SALT_ROUNDS, sequelize } from "../config";
 import { Roles } from "../enums";
 
 
@@ -15,6 +16,10 @@ class User extends Model<IUser, IUserCreation> implements IUser {
     public refreshToken!: string | null;
     public readonly createAt!: Date;
     public readonly updateAt!: Date;
+
+    async checkPassword(inputPassword: string): Promise<boolean> {
+        return bcrypt.compare(inputPassword, this.password);
+    }
 }
 
 User.init({
@@ -33,7 +38,11 @@ User.init({
     },
     password: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        set(value: string) {
+            const salt = bcrypt.genSaltSync(HASH_SALT_ROUNDS); // Generate salt
+            this.setDataValue("password", bcrypt.hashSync(value, salt));
+        }
     },
     role: {
         type: DataTypes.ENUM(Roles.ADMIN, Roles.USER),

@@ -38,8 +38,6 @@ export const insertUser = async (user: UserInsertArgs): Promise<IUser> => {
     const functionName = insertUser.name;
     logFunctionInfo(functionName, FunctionStatus.START);
     try {
-        user.password = await hashPassword(user.password);
-
         if (!user.role) {
             user.role = Roles.USER;
         }
