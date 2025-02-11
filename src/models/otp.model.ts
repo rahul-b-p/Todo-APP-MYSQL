@@ -4,21 +4,20 @@ import { sequelize } from '../config'
 import User from "./user.model";
 
 class Otp extends Model<IOtp, IOTPCreation> implements IOtp {
-    public id!: number;
-    public userId!: number;
+    public id!: string;
+    public userId!: string;
     public otp!: string;
     public expiresAt!: Date;
 }
 
 Otp.init({
     id: {
-        type: DataTypes.INTEGER.UNSIGNED,
-        allowNull: false,
-        autoIncrement: true,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true
     },
     userId: {
-        type: DataTypes.INTEGER.UNSIGNED,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
             model: User,

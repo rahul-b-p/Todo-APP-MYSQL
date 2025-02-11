@@ -6,7 +6,7 @@ import { customRequestWithPayload } from "../interfaces";
 import { deleteUserById, fetchUsers, findUserById, findUserDatasById, insertUser, sendUserCreationNotification, sendUserUpdationNotification, updateUserById } from "../services";
 import { UserFilterQuery, UserInsertArgs, UserUpdateBody } from "../types";
 import { logFunctionInfo, logger, sendCustomResponse } from "../utils";
-import { checkEmailValidity, validateEmailUniqueness } from "../validators";
+import { checkEmailValidity, validateEmailUniqueness, isValidUUID } from "../validators";
 import { getUpdateRequirments, getPaginationLinks } from "../helpers";
 
 
@@ -90,6 +90,9 @@ export const updateUser = async (req: customRequestWithPayload<{ id: string }, a
         const { email } = req.body;
 
         const { id } = req.params;
+        const isValidUserId = isValidUUID(id);
+        if (!isValidUserId) throw new BadRequestError(errorMessage.INVALID_ID);
+
         const existingUser = await findUserById(id);
         if (!existingUser) throw new NotFoundError(errorMessage.USER_NOT_FOUND);
 
@@ -134,6 +137,8 @@ export const deleteUser = async (req: customRequestWithPayload<{ id: string }>, 
     logFunctionInfo(functionName, FunctionStatus.START);
     try {
         const { id } = req.params;
+        const isValidUserId = isValidUUID(id);
+        if (!isValidUserId) throw new BadRequestError(errorMessage.INVALID_ID);
 
         const isDeleted = await deleteUserById(id);
         if (!isDeleted) throw new NotFoundError(errorMessage.USER_NOT_FOUND);
@@ -158,6 +163,8 @@ export const readUserById = async (req: customRequestWithPayload<{ id: string }>
 
     try {
         const { id } = req.params;
+        const isValidUserId = isValidUUID(id);
+        if (!isValidUserId) throw new BadRequestError(errorMessage.INVALID_ID);
 
         const existingUser = await findUserDatasById(id);
         if (!existingUser) throw new NotFoundError(errorMessage.USER_NOT_FOUND);

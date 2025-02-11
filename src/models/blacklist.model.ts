@@ -4,7 +4,7 @@ import { sequelize } from '../config'
 
 
 class Blacklist extends Model<IBlackList, IBlacklistCreation> implements IBlackList {
-    public id!: number;
+    public id!: string;
     public token!: string;
     public expireAt!: Date;
 }
@@ -12,8 +12,8 @@ class Blacklist extends Model<IBlackList, IBlacklistCreation> implements IBlackL
 Blacklist.init(
     {
         id: {
-            type: DataTypes.INTEGER.UNSIGNED,
-            autoIncrement: true,
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
             primaryKey: true
         },
         token: {

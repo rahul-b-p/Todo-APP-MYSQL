@@ -3,12 +3,12 @@ import { Roles } from '../enums';
 
 
 export interface IUser {
-    id: number;
+    id: string;
     username: string;
     email: string;
     password: string;
     role: Roles;
-    refreshToken?: string|null;
+    refreshToken?: string | null;
     verified?: boolean
 }
 
