@@ -8,7 +8,7 @@ class Todo extends Model<ITodo, ITodoCreation> implements ITodo {
     public id!: number;
     public title!: string;
     public description!: string;
-    public createdBy!: number;
+    public userId!: number;
     public dueAt!: Date;
     public completed!: boolean;
     public isDeleted!: boolean;
@@ -33,7 +33,7 @@ Todo.init(
             type: DataTypes.STRING,
             allowNull: false,
         },
-        createdBy: {
+        userId: {
             type: DataTypes.INTEGER.UNSIGNED,
             allowNull: false,
             references: {
@@ -70,7 +70,7 @@ Todo.init(
 );
 
 //Establish Foreign Key Relationship
-Todo.belongsTo(User, { foreignKey: "createdBy" });
-User.hasMany(Todo, { foreignKey: "createdBy" });
+Todo.belongsTo(User, { as: 'user', foreignKey: 'userId' });
+User.hasMany(Todo, { foreignKey: "userId" });
 
 export default Todo;
