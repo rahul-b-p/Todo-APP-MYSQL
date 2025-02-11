@@ -12,7 +12,7 @@ class User extends Model<IUser, IUserCreation> implements IUser {
     public password!: string;
     public role!: Roles;
     public verified!: boolean;
-    public refreshToken?: string | undefined;
+    public refreshToken!: string | null;
     public readonly createAt!: Date;
     public readonly updateAt!: Date;
 }
@@ -30,7 +30,6 @@ User.init({
     email: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true
     },
     password: {
         type: DataTypes.STRING,
@@ -43,6 +42,7 @@ User.init({
     verified: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
+        allowNull: true
     },
     refreshToken: {
         type: DataTypes.STRING,
@@ -52,10 +52,12 @@ User.init({
     sequelize,
     tableName: "User",
     timestamps: true,
-    defaultScope: {
-        attributes: { exclude: ['password'] }
-    }
-
+    indexes: [
+        {
+            unique: true,
+            fields: ['email']  // Explicitly define the unique index on 'email'
+        },
+    ]
 }
 );
 

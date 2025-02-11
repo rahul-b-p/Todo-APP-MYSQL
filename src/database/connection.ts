@@ -20,7 +20,9 @@ export const connectMySql = async () => {
  */
 export const synchronizeDB = async () => {
     try {
-        await sequelize.sync({ alter: true });
+        await sequelize.sync({
+            alter: true
+        });
         logger.info("Database synchronized.");
     } catch (error) {
         logger.error("Database synchronization failed:", error);

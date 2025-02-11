@@ -1,6 +1,5 @@
 
 import { Roles } from "../enums";
-import { IUser } from "../interfaces";
 
 
 export type UserAuthBody = {
@@ -15,4 +14,23 @@ export type UserInsertArgs = UserAuthBody & {
     role?: Roles;
 }
 
+export type UserSignUpBody = Omit<UserInsertArgs, 'role'>;
 
+export type UserUpdateArgs = {
+    username?: string;
+    email?: string;
+    password?: string;
+    role?: Roles;
+    refreshToken?: string | null;
+    verified?: boolean
+};
+
+export type VerifyUserBody = {
+    email: string;
+    otp: string;
+}
+
+export type UserPasswordResetBody = VerifyUserBody & {
+    password: string;
+    confirmPassword: string;
+}

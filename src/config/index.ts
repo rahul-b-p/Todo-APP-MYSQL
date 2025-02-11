@@ -3,3 +3,4 @@ export * from './morgan.config';
 export * from './winston.config';
 export * from './db.config';
 export * from './regex.config';
+export { default as transporter } from './mail.config';
