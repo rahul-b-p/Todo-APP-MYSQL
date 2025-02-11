@@ -22,9 +22,8 @@ Todo.init(
     {
         id: {
             type: DataTypes.INTEGER.UNSIGNED,
-            unique: true,
-            allowNull: false,
-            autoIncrement: true
+            autoIncrement: true,
+            primaryKey: true
         },
         title: {
             type: DataTypes.STRING,
@@ -36,7 +35,7 @@ Todo.init(
         },
         createdBy: {
             type: DataTypes.INTEGER.UNSIGNED,
-            allowNull: true,
+            allowNull: false,
             references: {
                 model: User,
                 key: 'id',
@@ -45,15 +44,17 @@ Todo.init(
         },
         dueAt: {
             type: DataTypes.DATE,
-            allowNull: true,
+            allowNull: false,
         },
         completed: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,
+            allowNull: false
         },
         isDeleted: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,
+            allowNull: false
         },
         deletedAt: {
             type: DataTypes.DATE,
