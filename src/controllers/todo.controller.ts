@@ -7,6 +7,7 @@ import { AuthenticationError, BadRequestError, ForbiddenError, InternalServerErr
 import { errorMessage, responseMessage } from "../constants";
 import { deleteTodoById, fetchTodoDataById, fetchTodos, findTodoById, findUserById, insertTodo, restoreSoftDeletedTodoById, softDeleteTodoById, updateTodoById } from "../services";
 import { compareDatesWithCurrentDate, getTodoUpdateArgs, getPaginationLinks } from "../helpers";
+import { isValidUUID } from "../validators";
 
 
 /**
@@ -49,6 +50,9 @@ export const createUserTodo = async (req: customRequestWithPayload<{ userId: str
 
     try {
         const { userId } = req.params;
+        const isValidUserId = isValidUUID(userId);
+        if (!isValidUserId) throw new BadRequestError(errorMessage.INVALID_ID);
+
         const existingUser = await findUserById(userId);
         if (!existingUser) throw new NotFoundError(errorMessage.USER_NOT_FOUND);
 
@@ -127,6 +131,9 @@ export const updateTodo = async (req: customRequestWithPayload<{ id: string }, a
         if (!reqOwner) throw new AuthenticationError();
 
         const { id } = req.params;
+        const isValidTodoId = isValidUUID(id);
+        if (!isValidTodoId) throw new BadRequestError(errorMessage.INVALID_ID);
+
         const existingTodo = await findTodoById(FetchType.ACTIVE, id);
         if (!existingTodo) throw new NotFoundError(errorMessage.TODO_NOT_FOUND);
 
@@ -165,6 +172,9 @@ export const deleteTodo = async (req: customRequestWithPayload<{ id: string }>, 
         if (!reqOwner) throw new AuthenticationError();
 
         const { id } = req.params;
+        const isValidTodoId = isValidUUID(id);
+        if (!isValidTodoId) throw new BadRequestError(errorMessage.INVALID_ID);
+
         const existingTodo = await findTodoById(FetchType.ACTIVE, id);
         if (!existingTodo) throw new NotFoundError(errorMessage.TODO_NOT_FOUND);
 
@@ -201,6 +211,9 @@ export const readTodoById = async (req: customRequestWithPayload<{ id: string }>
         if (!reqOwner) throw new AuthenticationError();
 
         const { id } = req.params;
+        const isValidTodoId = isValidUUID(id);
+        if (!isValidTodoId) throw new BadRequestError(errorMessage.INVALID_ID);
+
         const existingTodo = await fetchTodoDataById(id);
         if (!existingTodo) throw new NotFoundError(errorMessage.TODO_NOT_FOUND);
 
@@ -277,6 +290,9 @@ export const restoreTodo = async (req: customRequestWithPayload<{ id: string }>,
         if (!reqOwner) throw new AuthenticationError();
 
         const { id } = req.params;
+        const isValidTodoId = isValidUUID(id);
+        if (!isValidTodoId) throw new BadRequestError(errorMessage.INVALID_ID);
+
         const existingTrashTodo = await findTodoById(FetchType.TRASH, id);
         if (!existingTrashTodo) throw new NotFoundError(errorMessage.TODO_NOT_FOUND_IN_TRASH);
 
@@ -314,6 +330,9 @@ export const deleteTrashTodo = async (req: customRequestWithPayload<{ id: string
         if (!reqOwner) throw new AuthenticationError();
 
         const { id } = req.params;
+        const isValidTodoId = isValidUUID(id);
+        if (!isValidTodoId) throw new BadRequestError(errorMessage.INVALID_ID);
+
         const existingTrashTodo = await findTodoById(FetchType.TRASH, id);
         if (!existingTrashTodo) throw new NotFoundError(errorMessage.TODO_NOT_FOUND_IN_TRASH);
 

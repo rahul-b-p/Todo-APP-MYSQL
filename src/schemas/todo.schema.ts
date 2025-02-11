@@ -4,7 +4,7 @@ import { errorMessage } from "../constants";
 import { pageLimitSchema, pageNoSchema } from "./page.schema";
 import { TodoSortKeys } from "../enums";
 import { CompletedStatus } from "../enums";
-import { idRegex } from "../config";
+import { uuidRegex } from "../config";
 
 
 const titleSchema = z.string({ message: errorMessage.TITLE_REQUIRED }).min(5, errorMessage.TITLE_MIN_LENGTH);
@@ -24,7 +24,7 @@ export const todoFilterSchema = z.object({
     pageLimit: pageLimitSchema,
     status: z.nativeEnum(CompletedStatus, { message: errorMessage.INVALID_COMPLETE_STATUS }).optional(),
     title: z.string().optional(),
-    userId: z.string().regex(idRegex, { message: errorMessage.INVALID_ID }).optional(),
+    userId: z.string().regex(uuidRegex, { message: errorMessage.INVALID_ID }).optional(),
     dueAt: dueDateSchema.optional(),
     sortKey: z.nativeEnum(TodoSortKeys, { message: errorMessage.INVALID_SORT_KEY }).optional()
 }).strict();
