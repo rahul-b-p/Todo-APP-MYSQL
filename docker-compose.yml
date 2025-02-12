@@ -1,0 +1,46 @@
+version: "1.0"
+
+services:
+  todo-app-sql:
+    container_name: todo-sql
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:4000"
+    env_file:
+      - .env
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - nodejs-mysql-network
+    restart: always
+
+  mysql-db:
+    image: mysql:latest
+    container_name: mysql-db
+    ports:
+      - 3307:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_NAME}
+      MYSQL_USER: ${MYSQL_USERNAME}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - nodejs-mysql-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      retries: 10
+      interval: 3s
+      timeout: 30s
+    restart: always
+
+volumes:
+  mysql-data:
+
+networks:
+  nodejs-mysql-network:
+    name: nodejs-mysql-network
