@@ -6,10 +6,10 @@ config();
 
 
 const requiredEnvVariables: string[] = [
-    'DB_HOST',
-    'DB_NAME',
-    'DB_USERNAME',
-    'DB_PASSWORD',
+    'MYSQL_HOST',
+    'MYSQL_NAME',
+    'MYSQL_USERNAME',
+    'MYSQL_PASSWORD',
     'HASH_SALT_ROUNDS',
     'ADMIN_USERNAME',
     'ADMIN_EMAIL',
@@ -36,10 +36,10 @@ requiredEnvVariables.forEach((envVar) => {
 
 
 // exporting all env variables
-export const DB_HOST = process.env.DB_HOST as string;
-export const DB_NAME = process.env.DB_NAME as string;
-export const DB_USERNAME = process.env.DB_USERNAME as string;
-export const DB_PASSWORD = process.env.DB_PASSWORD as string;
+export const MYSQL_HOST = process.env.MYSQL_HOST as string;
+export const MYSQL_NAME = process.env.MYSQL_NAME as string;
+export const MYSQL_USERNAME = process.env.MYSQL_USERNAME as string;
+export const MYSQL_PASSWORD = process.env.MYSQL_PASSWORD as string;
 
 
 export const HASH_SALT_ROUNDS = Number(process.env.HASH_SALT_ROUNDS) as number;
