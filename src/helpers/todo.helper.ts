@@ -1,10 +1,11 @@
 import { FetchType, FunctionStatus } from "../enums";
 import { CompletedStatus } from "../enums/todo.enum";
 import { TimeInHHMM, TodoFilterQuery, UpdateTodoArgs, UpdateTodoBody, YYYYMMDD } from "../types";
-import { logFunctionInfo } from "../utils";
+import { logFunctionInfo, logger } from "../utils";
 import { getDateFromStrings, getDayRange } from "./date.helper";
 import { errorMessage } from "../constants";
 import { ITodo } from "../interfaces";
+import { Op } from "sequelize";
 
 
 
@@ -14,38 +15,39 @@ import { ITodo } from "../interfaces";
 export const getTodoFilter = (fetchType: FetchType, query: Omit<TodoFilterQuery, 'pageNo' | 'pageLimit'>): Record<string, any> => {
     logFunctionInfo(getTodoFilter.name, FunctionStatus.START);
     const { status, userId, dueAt, title } = query;
-    let matchFilter: Record<string, any> = {};
+    let filter: Record<string, any> = {};
 
 
     if (fetchType == FetchType.ACTIVE) {
-        matchFilter.isDeleted = false;
+        filter.isDeleted = false;
     }
 
     if (fetchType == FetchType.TRASH) {
-        matchFilter.isDeleted = true;
+        filter.isDeleted = true;
     }
 
     if (userId) {
-        matchFilter.userId = userId;
+        filter.userId = userId;
     }
     if (status) {
         if (status == CompletedStatus.COMPLETE) {
-            matchFilter.completed = true;
+            filter.completed = true;
         }
         else {
-            matchFilter.completed = false;
+            filter.completed = false;
         }
 
     }
     if (dueAt) {
         const dayRange = getDayRange(dueAt);
-        matchFilter.dueAt = { $gte: dayRange[0], $lte: dayRange[1] };
+        filter.dueAt = { $gte: dayRange[0], $lte: dayRange[1] };
     }
     if (title) {
-        matchFilter.title = { $regex: title, $options: "i" };
+        filter.title = { [Op.like]: `%${title}%` };
     }
 
-    return matchFilter;
+    logger.info(filter);
+    return filter;
 }
 
 
